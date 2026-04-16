@@ -1,0 +1,32 @@
+name: Code2Prompt Workflow
+on:
+  push:
+    branches: [ main ]  # 推送到 main 分支自动运行
+  workflow_dispatch:    # 支持手动点击运行
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 源码
+        uses: actions/checkout@v4
+
+      - name: 安装 Rust 环境
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: 编译 Rust 项目（生成二进制）
+        run: cargo build --release
+
+      - name: 安装 Python3（Ubuntu 自带，仅确保可用）
+        run: sudo apt-get install -y python3
+
+      - name: 运行 Python 脚本 → 生成 prompt.txt
+        run: python3 run.py
+
+      - name: 上传生成结果（可下载）
+        uses: actions/upload-artifact@v4
+        with:
+          name: prompt-result
+          path: prompt.txt
