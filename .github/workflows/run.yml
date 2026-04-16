@@ -16,7 +16,8 @@ jobs:
         with:
           toolchain: stable
 
-      - name: 编译 Rust 项目（生成二进制）
+      - name: Build Rust
+        working-directory: ./code2prompt-main
         run: cargo build --release
 
       - name: 安装 Python3（Ubuntu 自带，仅确保可用）
