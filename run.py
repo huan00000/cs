@@ -1,50 +1,51 @@
-import subprocess
-import os
+import time
+from datetime import datetime
 
-def generate_prompt(
-    code_dir: str = "./你的代码目录",  # 你要扫描的代码文件夹
-    output_file: str = "prompt.txt"   # 输出文件
-):
-    """
-    使用 code2prompt 生成 AI 提示词（Python 封装版）
-    """
-    # 二进制文件路径（Ubuntu 编译后位置）
-    binary_path = "./code2prompt-main/target/release/code2prompt"
+# 格式化当前时间
+def get_current_time():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # 检查二进制是否存在
-    if not os.path.exists(binary_path):
-        print("❌ 未找到编译后的 code2prompt，请先执行：cargo build --release")
-        return
+# 写入日志到txt
+def write_log(content):
+    with open("time_log.txt", "a", encoding="utf-8") as f:
+        f.write(content + "\n")
 
-    # 构建命令（和原命令完全等价）
-    cmd = [
-        binary_path,
-        code_dir,
-        "--output",
-        output_file
-    ]
-
-    try:
-        print(f"✅ 开始扫描目录：{code_dir}")
-        result = subprocess.run(
-            cmd,
-            check=True,
-            capture_output=True,
-            text=True,
-            encoding="utf-8"
-        )
-        print(f"✅ 生成成功！输出文件：{output_file}")
-        return True
-
-    except subprocess.CalledProcessError as e:
-        print(f"❌ 运行失败：{e.stderr}")
-        return False
-
-
-# ==================== 直接运行 ====================
 if __name__ == "__main__":
-    # 你只需要改这里！
-    代码目录 = "./test_code"    # 你的代码文件夹
-    输出文件 = "prompt.txt"     # 输出文件名
+    # 1. 程序启动，获取并记录当前时间
+    start_timestamp = time.time()
+    t1 = get_current_time()
+    log1 = f"【程序启动】当前时间：{t1}"
+    print(log1)
+    write_log(log1)
 
-    generate_prompt(code_dir=代码目录, output_file=输出文件)
+    # 休眠 5小时59分 = 21540 秒
+    time.sleep(21540)
+
+    # 2. 5小时59分后获取时间
+    t2 = get_current_time()
+    log2 = f"【5小时59分后】当前时间：{t2}"
+    print(log2)
+    write_log(log2)
+
+    # 再休眠50秒
+    time.sleep(50)
+
+    # 3. 再加50秒后获取时间
+    t3 = get_current_time()
+    log3 = f"【再加50秒后】当前时间：{t3}"
+    print(log3)
+    write_log(log3)
+
+    # 4. 接下来1分钟内，每秒记录一次运行时长
+    print("【进入1分钟每秒计时阶段】")
+    write_log("【进入1分钟每秒计时阶段】")
+    for sec in range(60):
+        run_time = time.time() - start_timestamp
+        log_txt = f"第{sec+1}秒，已运行时长：{run_time:.2f} 秒"
+        print(log_txt)
+        write_log(log_txt)
+        time.sleep(1)
+
+    end_log = "【所有流程完成，程序结束】"
+    print(end_log)
+    write_log(end_log)
