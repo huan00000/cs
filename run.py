@@ -1,14 +1,20 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import re
 
-file_path = "1.conf"
+def replace_proxy():
+    file = "1.conf"
+    # 读文件
+    with open(file, 'r', encoding='utf-8', errors='ignore') as f:
+        content = f.read()
+    
+    # 全局精准替换 PROXY
+    new_content = re.sub(r'PROXY', 'AUTO', content)
 
-with open(file_path, "r", encoding="utf-8") as f:
-    text = f.read()
+    # 写回
+    with open(file, 'w', encoding='utf-8', errors='ignore') as f:
+        f.write(new_content)
 
-text = text.replace("PROXY", "AUTO")
+    print("已完成 1.conf 中所有 PROXY 替换为 AUTO")
 
-with open(file_path, "w", encoding="utf-8") as f:
-    f.write(text)
-
-print("替换完成：PROXY → AUTO")
+if __name__ == "__main__":
+    replace_proxy()
