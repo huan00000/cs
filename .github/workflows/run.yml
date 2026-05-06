@@ -1,25 +1,24 @@
-name: Run Python Timer
+name: Replace PROXY to AUTO
 
 on:
-  workflow_dispatch: # 手动触发运行
+  push:
+  workflow_dispatch:
 
 jobs:
-  run-job:
+  replace:
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 设置 Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+      - name: 替换 1.conf 中 PROXY 为 AUTO
+        run: |
+          sed -i 's/PROXY/AUTO/g' 1.conf
 
-      - name: 运行 Python 脚本
-        run: python run.py
-
-      - name: 上传日志文件 time_log.txt
-        uses: actions/upload-artifact@v4
-        with:
-          name: timer-log-file
-          path: time_log.txt
+      - name: 提交并推送修改
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add 1.conf
+          git commit -m "auto: replace PROXY -> AUTO in 1.conf"
+          git push
