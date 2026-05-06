@@ -4,21 +4,29 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   replace:
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 替换 1.conf 中 PROXY 为 AUTO
-        run: |
-          sed -i 's/PROXY/AUTO/g' 1.conf
+        run: sed -i 's/PROXY/AUTO/g' 1.conf
 
       - name: 提交并推送修改
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add 1.conf
-          git commit -m "auto: replace PROXY -> AUTO in 1.conf"
-          git push
+          if git diff --cached --quiet; then
+            echo "没有变更，跳过提交"
+          else
+            git commit -m "auto: replace PROXY -> AUTO in 1.conf"
+            git push
+          fi
